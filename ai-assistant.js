@@ -3,6 +3,16 @@
     if (window.__ChatWidgetLoaded__) return;
     window.__ChatWidgetLoaded__ = true;
 
+        // اضافه کردن meta charset به head صفحه
+    const metaCharset = document.createElement('meta');
+    metaCharset.charset = 'UTF-8';
+    document.head.appendChild(metaCharset);
+
+    const metaContentType = document.createElement('meta');
+    metaContentType.httpEquiv = 'Content-Type';
+    metaContentType.content = 'text/html; charset=UTF-8';
+    document.head.appendChild(metaContentType);
+
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "http://cdn.sadra-ai.ir/ai-assistant.css";
