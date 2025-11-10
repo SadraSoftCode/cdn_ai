@@ -3,15 +3,20 @@
     if (window.__ChatWidgetLoaded__) return;
     window.__ChatWidgetLoaded__ = true;
 
-        // اضافه کردن meta charset به head صفحه
-    const metaCharset = document.createElement('meta');
-    metaCharset.charset = 'UTF-8';
-    document.head.appendChild(metaCharset);
+    // چک کردن و اضافه کردن meta charset اگر وجود ندارد
+    if (!document.querySelector('meta[charset="UTF-8"]')) {
+      const metaCharset = document.createElement('meta');
+      metaCharset.charset = 'UTF-8';
+      document.head.appendChild(metaCharset);
+    }
 
-    const metaContentType = document.createElement('meta');
-    metaContentType.httpEquiv = 'Content-Type';
-    metaContentType.content = 'text/html; charset=UTF-8';
-    document.head.appendChild(metaContentType);
+    // چک کردن و اضافه کردن meta content-type اگر وجود ندارد
+    if (!document.querySelector('meta[http-equiv="Content-Type"]')) {
+      const metaContentType = document.createElement('meta');
+      metaContentType.httpEquiv = 'Content-Type';
+      metaContentType.content = 'text/html; charset=UTF-8';
+      document.head.appendChild(metaContentType);
+    }
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
