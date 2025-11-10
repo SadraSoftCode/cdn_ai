@@ -5,7 +5,7 @@
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "http://cdn.sadra-ai.ir/ai-assistant.css";
+    link.href = "http://storage.sadra-ai.ir/ai-assistant.css";
     document.head.appendChild(link);
 
     const widget = document.createElement("div");
