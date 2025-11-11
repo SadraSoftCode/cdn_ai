@@ -415,6 +415,7 @@
     const placeholderMessage = document.createElement("div");
     placeholderMessage.id = "chat-placeholder";
     placeholderMessage.className = "chat-message chat-placeholder";
+     placeholderMessage.innerHTML = config.placeholder;
     messages.appendChild(placeholderMessage);
 
     // مدیریت session_id از localStorage
@@ -458,7 +459,7 @@
         const placeholder = document.createElement("div");
         placeholder.id = "chat-placeholder";
         placeholder.className = "chat-message chat-placeholder";
-        placeholderMessage.innerHTML = config.placeholder;
+        placeholder.innerHTML = config.placeholder;
         messages.appendChild(placeholder);
       }
     }
