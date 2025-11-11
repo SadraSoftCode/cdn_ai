@@ -11,6 +11,14 @@
     if (window.__ChatWidgetLoaded__) return;
     window.__ChatWidgetLoaded__ = true;
 
+     // اول فونت رو در main document لود کنیم
+    if (!document.querySelector('#vazirmatn-font')) {
+      const fontLink = document.createElement('link');
+      fontLink.id = 'vazirmatn-font';
+      fontLink.rel = 'stylesheet';
+      fontLink.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap';
+      document.head.appendChild(fontLink);
+    }
     // ایجاد host element
     const host = document.createElement("div");
     host.id = "chat-widget-container";
@@ -22,7 +30,6 @@
     // اضافه کردن استایل‌ها
     const style = document.createElement("style");
     style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
       
       :host {
         all: initial;
@@ -396,10 +403,9 @@
         </div>
       </div>
     `;
-
     shadow.appendChild(style);
     shadow.appendChild(widget);
-
+ 
     // مقداردهی المنت‌ها از shadow DOM
     const toggle = shadow.getElementById("chat-toggle");
     const box = shadow.getElementById("chat-box");
