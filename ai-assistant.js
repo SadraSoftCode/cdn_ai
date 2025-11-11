@@ -396,7 +396,7 @@
     const placeholderMessage = document.createElement("div");
     placeholderMessage.id = "chat-placeholder";
     placeholderMessage.className = "chat-message chat-placeholder";
-    placeholderMessage.innerHTML = "من دستیار فروش بلیت قطار، هواپیما و اتوبوس هستم.<br>برای شروع، قصد دارید به کجا سفر کنید؟";
+    placeholderMessage.innerHTML = "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟";
     messages.appendChild(placeholderMessage);
 
     // مدیریت session_id از localStorage
@@ -440,7 +440,7 @@
         const placeholder = document.createElement("div");
         placeholder.id = "chat-placeholder";
         placeholder.className = "chat-message chat-placeholder";
-        placeholder.innerHTML = "من دستیار فروش بلیت قطار، هواپیما و اتوبوس هستم.<br>برای شروع، قصد دارید به کجا سفر کنید؟";
+        placeholder.innerHTML = "من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟ <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟";
         messages.appendChild(placeholder);
       }
     }
@@ -500,7 +500,7 @@
           user_name: "",
         };
 
-        const res = await fetch("https://bot.6or.ir/site-chat/send", {
+        const res = await fetch("https://bot.sadra-ai.ir/site-chat/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
