@@ -1,4 +1,12 @@
 (function () {
+  const defaultConfig = {
+    bottom: 16, // فاصله از پایین اگر مثبت، فاصله از بالا اگر منفی
+    right: 16,   // فاصله از راست اگر مثبت، فاصله از چپ اگر منفی
+    placeholder: "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟"
+  };
+  const userConfig = window.AIChatWidgetConfig || {};
+  const config = { ...defaultConfig, ...userConfig };
+
   function initChatWidget() {
     if (window.__ChatWidgetLoaded__) return;
     window.__ChatWidgetLoaded__ = true;
@@ -29,17 +37,14 @@
       }
 
       #chat-widget {
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
         z-index: 2147483647;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
 
       /* Chat Toggle Button */
       #chat-toggle {
-        background: #0073e6;
-        color: white;
+        background: #00f8fb;
+        color: #ffff;
         border: none;
         border-radius: 32px;
         width: 50px;
@@ -49,7 +54,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(2, 177, 246, 0.3);
         overflow: hidden;
         transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         padding: 0 16px;
@@ -71,6 +76,7 @@
 
       /* متن: همیشه فضا دارد ولی مخفی است */
       #chat-toggle .chat-text {
+        color: #ffff;
         font-size: small;
         opacity: 0;
         margin-left: 8px;
@@ -83,8 +89,8 @@
       /* هاور: نمایش متن و کوچک شدن آیکون */
       #chat-toggle:hover {
         width: 200px;
-        background-color: #005bb5;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        background: #02b1f6;
+        box-shadow: 0 6px 18px rgba(2, 177, 246, 0.4);
       }
 
       #chat-toggle:hover .chat-text {
@@ -108,10 +114,10 @@
         position: fixed;
         bottom: 88px;
         right: 16px;
-        background: #f5f5f5;
+        background: #ffffff;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 24px rgba(1, 38, 64, 0.15);
       }
 
       #chat-box.active {
@@ -124,19 +130,21 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px 16px;
-        background: #0073e6;
-        color: white;
+        background: #ffff;
+        color: #00f8fb;
         font-weight: 600;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 248, 251, 0.2);
       }
-
+      #chat-header-logo {
+        color: #505050ff;
+      }
       #chat-header-close {
         padding: 0;
         background: none;
         border: none;
         font-size: 16px;
         cursor: pointer;
-        color: white;
+        color: #00f8fb;
       }
 
       #chat-messages {
@@ -171,15 +179,19 @@
       }
 
       .chat-user {
-        background-color: #d4edda;
+        background-color: #eefcff;
+        color: #012640;
         float: left;
         border-bottom-left-radius: 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       }
 
       .chat-admin {
-        background-color: #d1e7ff;
+        background-color: #d4f7ff;
+        color: #012640;
         float: right;
         border-bottom-right-radius: 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       }
 
       .chat-meta {
@@ -195,25 +207,25 @@
         align-items: center;
         gap: 8px;
         padding: 8px;
-        background: #fff;
-        border-top: 1px solid #ddd;
+        background: #f5fcff;
+        border-top: 1px solid #02b1f6;
         border-radius: 12px;
       }
 
       #chat-text-box {
         flex: 1;
-        border: 1px solid #ddd;
+        border: 1px solid #02b1f6;
+        background: #ffffff;
         border-radius: 20px;
         padding: 4px 12px;
         display: flex;
         align-items: center;
-        background: #fff;
         transition: border-color 0.2s, box-shadow 0.2s;
       }
 
       #chat-text-box.focused {
-        border-color: #0073e6;
-        box-shadow: 0 0 4px rgba(0, 115, 230, 0.3);
+        border-color: #00f8fb;
+        box-shadow: 0 0 6px rgba(0, 248, 251, 0.3);
       }
 
       #chat-text {
@@ -253,29 +265,22 @@
         flex-shrink: 0;
       }
 
-      #chat-send {
-        background: #0073e6;
-      }
+     #chat-send {
+      background: #00f8fb;
+}
 
-      #chat-send:hover {
-        background: #005bb5;
-        transform: scale(1.05);
-      }
+#chat-send:hover {
+  background: #02b1f6;
+  transform: scale(1.05);
+}
 
-      #chat-send svg {
-        width: 18px;
-        height: 18px;
-        fill: #fff;
-      }
+#chat-clear-history {
+  background: #e0f7ff;
+}
 
-      #chat-clear-history {
-        background: #f0f0f0;
-      }
-
-      #chat-clear-history:hover {
-        background: #e0e0e0;
-        transform: scale(1.05);
-      }
+#chat-clear-history:hover {
+  background: #c0f0ff;
+}
 
       #chat-clear-history svg {
         width: 18px;
@@ -295,7 +300,7 @@
       .chat-loading span {
         width: 6px;
         height: 6px;
-        background: #4f8aff;
+         background: #02b1f6;
         border-radius: 50%;
         animation: bounce 1.2s infinite ease-in-out;
       }
@@ -329,7 +334,7 @@
       }
       
       .chat-placeholder {
-        color: #999;
+        color: rgba(1, 38, 64, 0.5);
         font-style: italic;
         text-align: center;
         margin: 20px 0;
@@ -343,6 +348,20 @@
     // ایجاد ساختار ویجت
     const widget = document.createElement("div");
     widget.id = "chat-widget";
+    widget.style.position = "fixed";
+
+    // اعمال منطق موقعیت
+    if (config.bottom >= 0) {
+      widget.style.bottom = config.bottom + "px";
+    } else {
+      widget.style.top = Math.abs(config.bottom) + "px";
+    }
+
+    if (config.right >= 0) {
+      widget.style.right = config.right + "px";
+    } else {
+      widget.style.left = Math.abs(config.right) + "px";
+    }
     widget.innerHTML = `
       <button id="chat-toggle" aria-label="باز و بسته کردن چت">
         <svg xmlns="http://www.w3.org/2000/svg" class="chat-icon1" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -396,7 +415,6 @@
     const placeholderMessage = document.createElement("div");
     placeholderMessage.id = "chat-placeholder";
     placeholderMessage.className = "chat-message chat-placeholder";
-    placeholderMessage.innerHTML = "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟";
     messages.appendChild(placeholderMessage);
 
     // مدیریت session_id از localStorage
@@ -440,7 +458,7 @@
         const placeholder = document.createElement("div");
         placeholder.id = "chat-placeholder";
         placeholder.className = "chat-message chat-placeholder";
-        placeholder.innerHTML = "من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟ <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟";
+        placeholderMessage.innerHTML = config.placeholder;
         messages.appendChild(placeholder);
       }
     }
@@ -467,7 +485,7 @@
     function appendMessage(msg, from = "شما") {
       const placeholder = shadow.getElementById("chat-placeholder");
       if (placeholder) placeholder.remove();
-      
+
       const div = document.createElement("div");
       div.className =
         "chat-message " + (from === "AI" ? "chat-admin" : "chat-user");
