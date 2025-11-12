@@ -1,22 +1,102 @@
 (function () {
   const defaultConfig = {
     bottom: 16, // فاصله از پایین اگر مثبت، فاصله از بالا اگر منفی
-    right: 16,   // فاصله از راست اگر مثبت، فاصله از چپ اگر منفی
-    placeholder: "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟"
+    right: 16, // فاصله از راست اگر مثبت، فاصله از چپ اگر منفی
+    placeholder:
+      "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟",
   };
   const userConfig = window.AIChatWidgetConfig || {};
   const config = { ...defaultConfig, ...userConfig };
+  // --- Markdown Renderer (ایمن و سبک) ---
+  function renderMarkdown(text) {
+    if (!text) return "";
 
+    // escape HTML خطرناک
+    text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // قالب‌بندی کد بلاک‌ها (```code```)
+    text = text.replace(/```([\s\S]*?)```/g, (match, code) => {
+      return `<pre><code>${code.trim()}</code></pre>`;
+    });
+
+    // قالب‌بندی inline code (`code`)
+    text = text.replace(/`([^`]+)`/g, "<code class='inline-code'>$1</code>");
+
+    // جدول‌ها (Markdown tables)
+    text = text.replace(/((?:\|.*\|(?:\r?\n))+)/g, (match) => {
+      const rows = match
+        .trim()
+        .split(/\r?\n/)
+        .filter((r) => r.trim() && !/^\|?\s*-+\s*\|/.test(r)) // حذف خط جداکننده
+        .map((r) => {
+          const cells = r
+            .split("|")
+            .filter(Boolean)
+            .map((c) => c.trim());
+          return `<tr>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+        })
+        .join("");
+      return `<table class="markdown-table">${rows}</table>`;
+    });
+
+    // bold و italic
+    text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+    // لینک
+    text = text.replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      "<a href='$2' target='_blank'>$1</a>"
+    );
+
+    // تیترها
+    text = text.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+    text = text.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+    text = text.replace(/^# (.*$)/gim, "<h1>$1</h1>");
+
+    // لیست‌ها
+    text = text.replace(/^\s*[-*] (.*)$/gim, "<li>$1</li>");
+    text = text.replace(/(<li>.*<\/li>)/gims, "<ul>$1</ul>");
+
+    // پاراگراف‌ها
+    text = text.replace(/\n{2,}/g, "</p><p>");
+    text = "<p>" + text + "</p>";
+
+    return text;
+  }
+  // --- تزریق استایل و highlight.js ---
+  function injectMarkdownStyle(shadowRoot) {
+    // افزودن highlight.js
+    if (!shadowRoot.getElementById("hljs-style")) {
+      const link = document.createElement("link");
+      link.id = "hljs-style";
+      link.rel = "stylesheet";
+      link.href =
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
+      shadowRoot.appendChild(link);
+
+      const script = document.createElement("script");
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
+      script.onload = () => {
+        shadowRoot
+          .querySelectorAll("pre code")
+          .forEach((el) => hljs.highlightElement(el));
+      };
+      shadowRoot.appendChild(script);
+    }
+  }
   function initChatWidget() {
     if (window.__ChatWidgetLoaded__) return;
     window.__ChatWidgetLoaded__ = true;
 
-     // اول فونت رو در main document لود کنیم
-    if (!document.querySelector('#vazirmatn-font')) {
-      const fontLink = document.createElement('link');
-      fontLink.id = 'vazirmatn-font';
-      fontLink.rel = 'stylesheet';
-      fontLink.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap';
+    // اول فونت رو در main document لود کنیم
+    if (!document.querySelector("#vazirmatn-font")) {
+      const fontLink = document.createElement("link");
+      fontLink.id = "vazirmatn-font";
+      fontLink.rel = "stylesheet";
+      fontLink.href =
+        "https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap";
       document.head.appendChild(fontLink);
     }
     // ایجاد host element
@@ -274,20 +354,20 @@
 
      #chat-send {
       background: #00f8fb;
-}
+      }
 
-#chat-send:hover {
-  background: #02b1f6;
-  transform: scale(1.05);
-}
+      #chat-send:hover {
+        background: #02b1f6;
+        transform: scale(1.05);
+      }
 
-#chat-clear-history {
-  background: #e0f7ff;
-}
+      #chat-clear-history {
+        background: #e0f7ff;
+      }
 
-#chat-clear-history:hover {
-  background: #c0f0ff;
-}
+      #chat-clear-history:hover {
+        background: #c0f0ff;
+      }
 
       #chat-clear-history svg {
         width: 18px;
@@ -350,6 +430,58 @@
         float: none !important;
         max-width: 100% !important;
       }
+      .chat-admin code, .chat-admin pre {
+        font-family: monospace;
+        direction: ltr;
+        background: #1e1e1e;
+        color: #eee;
+        border-radius: 8px;
+        padding: 8px 10px;
+        display: block;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+      .chat-admin .inline-code {
+        background: #f4f4f4;
+        color: #c7254e;
+        border-radius: 4px;
+        padding: 2px 5px;
+        display: inline;
+      }
+      .chat-admin a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .chat-admin a:hover {
+        text-decoration: underline;
+      }
+      .chat-admin h1, .chat-admin h2, .chat-admin h3 {
+        margin: 0.6em 0 0.3em;
+        font-weight: bold;
+      }
+      .chat-admin ul {
+        margin: 0.5em 1.5em;
+        padding: 0;
+      }
+      .chat-admin table.markdown-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0.75em 0;
+        font-size: 0.9em;
+      }
+      .chat-admin table.markdown-table td,
+      .chat-admin table.markdown-table th {
+        border: 1px solid #ccc;
+        padding: 2px;
+        text-align: center !important;
+      }
+      .chat-admin table.markdown-table tr:nth-child(even) {
+        background: #f8f8f8;
+      }
+      .chat-admin table.markdown-table tr:hover {
+        background: #f0f0f0;
+      }
+
     `;
 
     // ایجاد ساختار ویجت
@@ -405,7 +537,8 @@
     `;
     shadow.appendChild(style);
     shadow.appendChild(widget);
- 
+    injectMarkdownStyle(shadow);
+
     // مقداردهی المنت‌ها از shadow DOM
     const toggle = shadow.getElementById("chat-toggle");
     const box = shadow.getElementById("chat-box");
@@ -421,7 +554,7 @@
     const placeholderMessage = document.createElement("div");
     placeholderMessage.id = "chat-placeholder";
     placeholderMessage.className = "chat-message chat-placeholder";
-     placeholderMessage.innerHTML = config.placeholder;
+    placeholderMessage.innerHTML = config.placeholder;
     messages.appendChild(placeholderMessage);
 
     // مدیریت session_id از localStorage
@@ -496,7 +629,18 @@
       const div = document.createElement("div");
       div.className =
         "chat-message " + (from === "AI" ? "chat-admin" : "chat-user");
-      div.innerHTML = `${msg}`;
+      if (from === "AI") {
+        div.innerHTML = renderMarkdown(msg);
+        // اگر highlight.js لود شده بود
+        if (shadow.querySelector("pre code") && window.hljs) {
+          shadow
+            .querySelectorAll("pre code")
+            .forEach((el) => hljs.highlightElement(el));
+        }
+      } else {
+        div.textContent = msg;
+      }
+
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
       saveMessage(msg, from);
