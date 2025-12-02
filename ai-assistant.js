@@ -4,6 +4,22 @@
     right: 16, // فاصله از راست اگر مثبت، فاصله از چپ اگر منفی
     placeholder:
       "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟",
+   colors: {
+    themeColor: "#00f8fb",    // رنگ اصلی
+    themeHover: "#02b1f6",    // هاور دکمه‌ها / مرزها
+    headerText: "#00f8fb",
+    headerBg: "#ffffff",
+
+    userBubble: "#eefcff",
+    botBubble: "#d4f7ff",
+    textDark: "#012640",
+
+    inputBg: "#f5fcff",
+    inputBorder: "#02b1f6",
+
+    clearBtnBg: "#e0f7ff",
+    clearBtnHover: "#c0f0ff",
+  }
   };
   const userConfig = window.AIChatWidgetConfig || {};
   const config = { ...defaultConfig, ...userConfig };
@@ -65,30 +81,32 @@
     return text;
   }
   // --- تزریق استایل و highlight.js ---
-  function injectMarkdownStyle(shadowRoot) {
-    // افزودن highlight.js
-    if (!shadowRoot.getElementById("hljs-style")) {
-      const link = document.createElement("link");
-      link.id = "hljs-style";
-      link.rel = "stylesheet";
-      link.href =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-      shadowRoot.appendChild(link);
+  // function injectMarkdownStyle(shadowRoot) {
+  //   // افزودن highlight.js
+  //   if (!shadowRoot.getElementById("hljs-style")) {
+  //     const link = document.createElement("link");
+  //     link.id = "hljs-style";
+  //     link.rel = "stylesheet";
+  //     link.href =
+  //       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
+  //     shadowRoot.appendChild(link);
 
-      const script = document.createElement("script");
-      script.src =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
-      script.onload = () => {
-        shadowRoot
-          .querySelectorAll("pre code")
-          .forEach((el) => hljs.highlightElement(el));
-      };
-      shadowRoot.appendChild(script);
-    }
-  }
-  function initChatWidget() {
-    if (window.__ChatWidgetLoaded__) return;
-    window.__ChatWidgetLoaded__ = true;
+  //     const script = document.createElement("script");
+  //     script.src =
+  //       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
+  //     script.onload = () => {
+  //       shadowRoot
+  //         .querySelectorAll("pre code")
+  //         .forEach((el) => hljs.highlightElement(el));
+  //     };
+  //     shadowRoot.appendChild(script);
+  //   }
+  // }
+function initChatWidget() {
+  if (window.__ChatWidgetLoaded__) return;
+  if (document.getElementById("chat-widget-container")) return;
+  window.__ChatWidgetLoaded__ = true;
+
 
     // اول فونت رو در main document لود کنیم
     if (!document.querySelector("#vazirmatn-font")) {
@@ -130,7 +148,7 @@
 
       /* Chat Toggle Button */
       #chat-toggle {
-        background: #00f8fb;
+        background: ${config.colors.themeColor};
         color: #ffff;
         border: none;
         border-radius: 32px;
@@ -176,7 +194,7 @@
       /* هاور: نمایش متن و کوچک شدن آیکون */
       #chat-toggle:hover {
         width: 200px;
-        background: #02b1f6;
+        background: ${config.colors.themeHover};
         box-shadow: 0 6px 18px rgba(2, 177, 246, 0.4);
       }
 
@@ -217,10 +235,10 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px 16px;
-        background: #ffff;
-        color: #00f8fb;
+        background: ${config.colors.headerBg};
+        color: ${config.colors.headerText};
+        border-bottom: 1px solid ${config.colors.themeColor}33;
         font-weight: 600;
-        border-bottom: 1px solid rgba(0, 248, 251, 0.2);
       }
       #chat-header-logo {
         color: #505050ff;
@@ -231,7 +249,7 @@
         border: none;
         font-size: 16px;
         cursor: pointer;
-        color: #00f8fb;
+        color: ${config.colors.themeColor};
       }
 
       #chat-messages {
@@ -266,16 +284,16 @@
       }
 
       .chat-user {
-        background-color: #eefcff;
-        color: #012640;
+        background-color: ${config.colors.userBubble};
+        color: ${config.colors.textDark};
         float: left;
         border-bottom-left-radius: 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       }
 
       .chat-admin {
-        background-color: #d4f7ff;
-        color: #012640;
+        background-color: ${config.colors.botBubble};
+        color: ${config.colors.textDark};
         float: right;
         border-bottom-right-radius: 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -294,14 +312,14 @@
         align-items: center;
         gap: 8px;
         padding: 8px;
-        background: #f5fcff;
-        border-top: 1px solid #02b1f6;
+        background: ${config.colors.inputBg};
+        border-top: 1px solid ${config.colors.themeHover};
         border-radius: 12px;
       }
 
       #chat-text-box {
         flex: 1;
-        border: 1px solid #02b1f6;
+        border: 1px solid ${config.colors.inputBorder};
         background: #ffffff;
         border-radius: 20px;
         padding: 4px 12px;
@@ -311,8 +329,8 @@
       }
 
       #chat-text-box.focused {
-        border-color: #00f8fb;
-        box-shadow: 0 0 6px rgba(0, 248, 251, 0.3);
+        border-color: ${config.colors.themeColor};
+        box-shadow: 0 0 6px ${config.colors.themeColor}55;
       }
 
       #chat-text {
@@ -353,20 +371,20 @@
       }
 
      #chat-send {
-      background: #00f8fb;
+        background: ${config.colors.themeColor};
       }
 
       #chat-send:hover {
-        background: #02b1f6;
+        background: ${config.colors.themeHover};
         transform: scale(1.05);
       }
 
       #chat-clear-history {
-        background: #e0f7ff;
+        background: ${config.colors.clearBtnBg};
       }
 
       #chat-clear-history:hover {
-        background: #c0f0ff;
+        background: ${config.colors.clearBtnHover};
       }
 
       #chat-clear-history svg {
@@ -387,7 +405,7 @@
       .chat-loading span {
         width: 6px;
         height: 6px;
-         background: #02b1f6;
+        background: ${config.colors.themeHover};
         border-radius: 50%;
         animation: bounce 1.2s infinite ease-in-out;
       }
@@ -537,7 +555,7 @@
     `;
     shadow.appendChild(style);
     shadow.appendChild(widget);
-    injectMarkdownStyle(shadow);
+    // injectMarkdownStyle(shadow);
 
     // مقداردهی المنت‌ها از shadow DOM
     const toggle = shadow.getElementById("chat-toggle");
@@ -615,11 +633,21 @@
     loadChatHistory();
 
     // ذخیره پیام در تاریخچه
-    function saveMessage(msg, from) {
-      let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
-      history.push({ msg, from });
-      localStorage.setItem("chat_history", JSON.stringify(history));
-    }
+    // function saveMessage(msg, from) {
+      // let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+      // history.push({ msg, from });
+      // localStorage.setItem("chat_history", JSON.stringify(history));
+    // }
+function saveMessage(msg, from) {
+  let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+
+  history.push({ msg, from });
+
+  // فقط 20 پیام آخر نگه داریم
+  history = history.slice(-20);
+
+  localStorage.setItem("chat_history", JSON.stringify(history));
+}
 
     // افزودن پیام در چت
     function appendMessage(msg, from = "شما") {
@@ -632,11 +660,17 @@
       if (from === "AI") {
         div.innerHTML = renderMarkdown(msg);
         // اگر highlight.js لود شده بود
-        if (shadow.querySelector("pre code") && window.hljs) {
-          shadow
-            .querySelectorAll("pre code")
-            .forEach((el) => hljs.highlightElement(el));
-        }
+        
+        // if (shadow.querySelector("pre code") && window.hljs) {
+        //   shadow
+        //     .querySelectorAll("pre code")
+        //     .forEach((el) => hljs.highlightElement(el));
+        // }
+        // highlight فقط روی پیام جدید
+  if (window.hljs) {
+    const blocks = div.querySelectorAll("pre code");
+    blocks.forEach((el) => hljs.highlightElement(el));
+  }
       } else {
         div.textContent = msg;
       }
