@@ -4,22 +4,22 @@
     right: 16, // فاصله از راست اگر مثبت، فاصله از چپ اگر منفی
     placeholder:
       "سلام! 👋 <br/> من دستیار هوشمند هستم. چطور می‌تونم کمکتون کنم؟",
-   colors: {
-    themeColor: "#00f8fb",    // رنگ اصلی
-    themeHover: "#02b1f6",    // هاور دکمه‌ها / مرزها
-    headerText: "#00f8fb",
-    headerBg: "#ffffff",
+    colors: {
+      themeColor: "#00f8fb", // رنگ اصلی
+      themeHover: "#02b1f6", // هاور دکمه‌ها / مرزها
+      headerText: "#00f8fb",
+      headerBg: "#ffffff",
 
-    userBubble: "#eefcff",
-    botBubble: "#d4f7ff",
-    textDark: "#012640",
+      userBubble: "#eefcff",
+      botBubble: "#d4f7ff",
+      textDark: "#012640",
 
-    inputBg: "#f5fcff",
-    inputBorder: "#02b1f6",
+      inputBg: "#f5fcff",
+      inputBorder: "#02b1f6",
 
-    clearBtnBg: "#e0f7ff",
-    clearBtnHover: "#c0f0ff",
-  }
+      clearBtnBg: "#e0f7ff",
+      clearBtnHover: "#c0f0ff",
+    },
   };
   const userConfig = window.AIChatWidgetConfig || {};
   const config = { ...defaultConfig, ...userConfig };
@@ -102,11 +102,10 @@
   //     shadowRoot.appendChild(script);
   //   }
   // }
-function initChatWidget() {
-  if (window.__ChatWidgetLoaded__) return;
-  if (document.getElementById("chat-widget-container")) return;
-  window.__ChatWidgetLoaded__ = true;
-
+  function initChatWidget() {
+    if (window.__ChatWidgetLoaded__) return;
+    if (document.getElementById("chat-widget-container")) return;
+    window.__ChatWidgetLoaded__ = true;
 
     // اول فونت رو در main document لود کنیم
     if (!document.querySelector("#vazirmatn-font")) {
@@ -620,34 +619,31 @@ function initChatWidget() {
         messages.appendChild(placeholder);
       }
     }
+    let isLoadingHistory = false;
 
     // بارگذاری تاریخچه از localStorage
     function loadChatHistory() {
+      isLoadingHistory = true; // شروع مرحله لود
       const saved = localStorage.getItem("chat_history");
       if (saved) {
         const history = JSON.parse(saved);
         history.forEach((item) => appendMessage(item.msg, item.from));
       }
+      isLoadingHistory = false; // تمام شدن لود
       showPlaceholderIfEmpty();
     }
     loadChatHistory();
 
-    // ذخیره پیام در تاریخچه
-    // function saveMessage(msg, from) {
-      // let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
-      // history.push({ msg, from });
-      // localStorage.setItem("chat_history", JSON.stringify(history));
-    // }
-function saveMessage(msg, from) {
-  let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+    function saveMessage(msg, from) {
+      let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
 
-  history.push({ msg, from });
+      history.push({ msg, from });
 
-  // فقط 20 پیام آخر نگه داریم
-  history = history.slice(-20);
+      // فقط 20 پیام آخر نگه داریم
+      history = history.slice(-20);
 
-  localStorage.setItem("chat_history", JSON.stringify(history));
-}
+      localStorage.setItem("chat_history", JSON.stringify(history));
+    }
 
     // افزودن پیام در چت
     function appendMessage(msg, from = "شما") {
@@ -659,25 +655,22 @@ function saveMessage(msg, from) {
         "chat-message " + (from === "AI" ? "chat-admin" : "chat-user");
       if (from === "AI") {
         div.innerHTML = renderMarkdown(msg);
-        // اگر highlight.js لود شده بود
-        
-        // if (shadow.querySelector("pre code") && window.hljs) {
-        //   shadow
-        //     .querySelectorAll("pre code")
-        //     .forEach((el) => hljs.highlightElement(el));
-        // }
+
         // highlight فقط روی پیام جدید
-  if (window.hljs) {
-    const blocks = div.querySelectorAll("pre code");
-    blocks.forEach((el) => hljs.highlightElement(el));
-  }
+        if (window.hljs) {
+          const blocks = div.querySelectorAll("pre code");
+          blocks.forEach((el) => hljs.highlightElement(el));
+        }
       } else {
         div.textContent = msg;
       }
 
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
-      saveMessage(msg, from);
+      // جلوگیری از ذخیره پیام‌های لود‌شده از تاریخچه
+      if (!isLoadingHistory) {
+        saveMessage(msg, from);
+      }
     }
 
     // نمایش لودینگ نقطه‌ای
