@@ -80,28 +80,7 @@
 
     return text;
   }
-  // --- تزریق استایل و highlight.js ---
-  // function injectMarkdownStyle(shadowRoot) {
-  //   // افزودن highlight.js
-  //   if (!shadowRoot.getElementById("hljs-style")) {
-  //     const link = document.createElement("link");
-  //     link.id = "hljs-style";
-  //     link.rel = "stylesheet";
-  //     link.href =
-  //       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-  //     shadowRoot.appendChild(link);
 
-  //     const script = document.createElement("script");
-  //     script.src =
-  //       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
-  //     script.onload = () => {
-  //       shadowRoot
-  //         .querySelectorAll("pre code")
-  //         .forEach((el) => hljs.highlightElement(el));
-  //     };
-  //     shadowRoot.appendChild(script);
-  //   }
-  // }
   function initChatWidget() {
     if (window.__ChatWidgetLoaded__) return;
     if (document.getElementById("chat-widget-container")) return;
@@ -554,7 +533,6 @@
     `;
     shadow.appendChild(style);
     shadow.appendChild(widget);
-    // injectMarkdownStyle(shadow);
 
     // مقداردهی المنت‌ها از shadow DOM
     const toggle = shadow.getElementById("chat-toggle");
@@ -636,6 +614,12 @@
 
     function saveMessage(msg, from) {
       let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+
+      // جلوگیری از ذخیره پیام تکراری
+      const last = history[history.length - 1];
+      if (last && last.msg === msg && last.from === from) {
+        return;
+      }
 
       history.push({ msg, from });
 
