@@ -62,7 +62,7 @@
     // لینک
     text = text.replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
-      "<a href='$2' target='_blank'>$1</a>"
+      "<a href='$2' target='_blank'>$1</a>",
     );
 
     // تیترها
@@ -76,6 +76,7 @@
 
     // پاراگراف‌ها
     text = text.replace(/\n{2,}/g, "</p><p>");
+    text = text.replace(/\n/g, "<br />");
     text = "<p>" + text + "</p>";
 
     return text;
@@ -574,10 +575,10 @@
 
     // مدیریت focus روی textarea
     textarea.addEventListener("focus", () =>
-      textareaBox.classList.add("focused")
+      textareaBox.classList.add("focused"),
     );
     textarea.addEventListener("blur", () =>
-      textareaBox.classList.remove("focused")
+      textareaBox.classList.remove("focused"),
     );
 
     // مدیریت ارتفاع textarea
@@ -706,7 +707,7 @@
         loading.remove();
         appendMessage(
           "⚠️ خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.",
-          "AI"
+          "AI",
         );
       }
     }
